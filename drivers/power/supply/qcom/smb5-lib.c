@@ -1757,6 +1757,10 @@ int smblib_set_icl_current(struct smb_charger *chg, int icl_ua)
 	bool suspend = (icl_ua <= USBIN_25MA);
 	union power_supply_propval pval = {0, };
 
+	if (chg->real_charger_type == POWER_SUPPLY_TYPE_USB &&
+			icl_ua == USBIN_500MA)
+		icl_ua = USBIN_900MA;
+
 	/* Do not configure ICL from SW for DAM cables */
 	if (smblib_get_prop_typec_mode(chg) ==
 			    POWER_SUPPLY_TYPEC_SINK_DEBUG_ACCESSORY)
@@ -5254,10 +5258,11 @@ static int smblib_handle_usb_current(struct smb_charger *chg,
 				&& (usb_current == SUSPEND_CURRENT_UA))
 		is_float = true;
 
-	if (((usb_current < USBIN_500MA) && (usb_current > 0))
-			|| (usb_current == USBIN_900MA))
-	{
-		usb_current = USBIN_500MA;
+	if (chg->real_charger_type == POWER_SUPPLY_TYPE_USB) {
+		if (usb_current > 0 && usb_current < USBIN_500MA)
+			usb_current = USBIN_500MA;
+		else if (usb_current >= USBIN_500MA)
+			usb_current = USBIN_900MA;
 	}
 
 	if (chg->real_charger_type == POWER_SUPPLY_TYPE_USB_FLOAT) {
