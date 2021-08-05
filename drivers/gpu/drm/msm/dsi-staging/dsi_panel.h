@@ -37,9 +37,11 @@
 
 #define DSI_MODE_MAX 5
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 #define DEMURA_LEVEL_02 256
 #define DEMURA_LEVEL_08 11
 #define DEMURA_LEVEL_0D 1
+#endif
 
 enum dsi_panel_rotation {
 	DSI_PANEL_ROTATE_NONE = 0,
@@ -135,8 +137,10 @@ struct dsi_backlight_config {
 
 	bool dcs_type_ss_ea;
 	bool dcs_type_ss_eb;
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	bool xiaomi_f4_36_flag;
 	bool xiaomi_f4_41_flag;
+#endif
 	bool bl_remap_flag;
 
 	/* PWM params */
@@ -263,6 +267,7 @@ struct dsi_panel {
 	struct brightness_alpha_pair *fod_dim_lut;
 	u32 fod_dim_lut_count;
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	u32 last_bl_lvl;
 	u32 backlight_demura_level; /* For the f4_41 panel */
 	/* DC bkl */
@@ -271,6 +276,7 @@ struct dsi_panel {
 	u32 dc_threshold;
 	u32 dc_type;
 	bool resend_dc;
+#endif
 };
 
 static inline bool dsi_panel_ulps_feature_enabled(struct dsi_panel *panel)
@@ -401,6 +407,8 @@ u32 dsi_panel_get_fod_dim_alpha(struct dsi_panel *panel);
 
 int dsi_panel_apply_hbm_mode(struct dsi_panel *panel);
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 int dsi_panel_apply_dc_mode(struct dsi_panel *panel);
+#endif
 
 #endif /* _DSI_PANEL_H_ */
