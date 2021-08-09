@@ -1,5 +1,6 @@
 menu "Qualcomm RmNet extensions"
 
+source "techpack/data/drivers/emac-dwc-eqos/Kconfig"
 source "techpack/data/drivers/rmnet/Kconfig"
 
 endmenu
