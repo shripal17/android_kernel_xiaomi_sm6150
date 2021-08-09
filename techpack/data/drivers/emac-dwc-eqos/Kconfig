@@ -5,7 +5,7 @@
 config EMAC_DWC_EQOS
 	tristate "Qualcomm Technologies Inc. EMAC support"
 	depends on (ARM || ARM64)
-	default y
+	default n
 	help
 	  This driver supports the Synopsis EMAC Gigabit
 	  Ethernet controller.
