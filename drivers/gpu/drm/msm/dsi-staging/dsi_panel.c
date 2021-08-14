@@ -21,7 +21,9 @@
 #include <video/mipi_display.h>
 
 #include "dsi_panel.h"
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 #include "dsi_display.h"
+#endif
 #include "dsi_ctrl_hw.h"
 #include "dsi_parser.h"
 
@@ -640,6 +642,7 @@ static int dsi_panel_wled_register(struct dsi_panel *panel,
 	return 0;
 }
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 enum {
 	DEMURA_STATUS_NONE = 0,
 	DEMURA_STATUS_DC_L1,
@@ -684,6 +687,7 @@ static int dsi_panel_update_backlight_demura_level(struct dsi_panel *panel,
 		panel->backlight_demura_level, bl_lvl, panel->dc_demura_threshold);
 	return rc;
 }
+#endif
 
 static int dsi_panel_update_backlight(struct dsi_panel *panel,
 	u32 bl_lvl)
@@ -720,12 +724,14 @@ static int dsi_panel_update_backlight(struct dsi_panel *panel,
 	if (rc < 0)
 		pr_err("failed to update dcs backlight:%d\n", bl_lvl);
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	/* For the f4_41 panel, we need to switch the DEMURA_LEVEL according to the value of the 51 register. */
 	if (panel->bl_config.xiaomi_f4_41_flag)
 		rc = dsi_panel_update_backlight_demura_level(panel, bl_lvl);
 
 	if (rc < 0)
 		pr_err("failed to update demura backlight:%d\n", bl_lvl);
+#endif
 
 	if (panel->doze_enabled) {
 		dsi_panel_update_doze(panel);
@@ -886,6 +892,7 @@ int dsi_panel_set_fod_hbm(struct dsi_panel *panel, bool status)
 	return rc;
 }
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 bool dc_skip_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 {
 	/* 1. dc enable is 1;
@@ -896,6 +903,7 @@ bool dc_skip_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 	 */
 	return panel->dc_enable && bl_lvl < panel->dc_threshold && bl_lvl != 0 && panel->dc_type && panel->last_bl_lvl != 0;
 }
+#endif
 
 int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 {
@@ -905,7 +913,11 @@ int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 	if (panel->host_config.ext_bridge_num)
 		return 0;
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	pr_info("backlight type:%d lvl:%d\n", bl->type, bl_lvl);
+#else
+	pr_debug("backlight type:%d lvl:%d\n", bl->type, bl_lvl);
+#endif
 
 	switch (bl->type) {
 	case DSI_BACKLIGHT_WLED:
@@ -924,7 +936,9 @@ int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 		rc = -ENOTSUPP;
 	}
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	panel->last_bl_lvl = bl_lvl;
+#endif
 
 	return rc;
 }
@@ -1973,6 +1987,7 @@ const char *cmd_set_prop_map[DSI_CMD_SET_MAX] = {
 	"qcom,mdss-dsi-dispparam-hbm-fod-on-command",
 	"qcom,mdss-dsi-dispparam-hbm-fod-off-command",
 	"qcom,mdss-dsi-read-lockdown-info-command",
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	"qcom,mdss-dsi-dispparam-demura-level2-command",
 	"qcom,mdss-dsi-dispparam-demura-level8-command",
 	"qcom,mdss-dsi-dispparam-demura-leveld-command",
@@ -1980,6 +1995,7 @@ const char *cmd_set_prop_map[DSI_CMD_SET_MAX] = {
 	"qcom,mdss-dsi-dispparam-dc-demura-l2-command",
 	"qcom,mdss-dsi-dispparam-dc-on-command",
 	"qcom,mdss-dsi-dispparam-dc-off-command",
+#endif
 };
 
 const char *cmd_set_state_map[DSI_CMD_SET_MAX] = {
@@ -2011,6 +2027,7 @@ const char *cmd_set_state_map[DSI_CMD_SET_MAX] = {
 	"qcom,mdss-dsi-dispparam-hbm-fod-on-command-state",
 	"qcom,mdss-dsi-dispparam-hbm-fod-off-command-state",
 	"qcom,mdss-dsi-read-lockdown-info-command-state",
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	"qcom,mdss-dsi-dispparam-demura-level2-command-state",
 	"qcom,mdss-dsi-dispparam-demura-level8-command-state",
 	"qcom,mdss-dsi-dispparam-demura-leveld-command-state",
@@ -2018,6 +2035,7 @@ const char *cmd_set_state_map[DSI_CMD_SET_MAX] = {
 	"qcom,mdss-dsi-dispparam-dc-demura-l2-command-state",
 	"qcom,mdss-dsi-dispparam-dc-on-command-state",
 	"qcom,mdss-dsi-dispparam-dc-off-command-state",
+#endif
 };
 
 static int dsi_panel_get_cmd_pkt_count(const char *data, u32 length, u32 *cnt)
@@ -2590,11 +2608,13 @@ static int dsi_panel_parse_bl_config(struct dsi_panel *panel)
 	panel->bl_config.dcs_type_ss_eb = utils->read_bool(utils->data,
 			"qcom,mdss-dsi-bl-dcs-type-ss-eb");
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	panel->bl_config.xiaomi_f4_36_flag = utils->read_bool(utils->data,
 			"qcom,mdss-dsi-bl-xiaomi-f4-36-flag");
 
 	panel->bl_config.xiaomi_f4_41_flag = utils->read_bool(utils->data,
 			"qcom,mdss-dsi-bl-xiaomi-f4-41-flag");
+#endif
 
 	panel->bl_config.bl_remap_flag = utils->read_bool(utils->data,
 			"qcom,mdss-brightness-remap");
@@ -2678,6 +2698,7 @@ static int dsi_panel_parse_bl_config(struct dsi_panel *panel)
 		panel->doze_backlight_threshold = val;
 	}
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	rc = utils->read_u32(utils->data,
 			"qcom,mdss-dsi-panel-dc-demura-threshold", &val);
 	if (rc) {
@@ -2706,6 +2727,7 @@ static int dsi_panel_parse_bl_config(struct dsi_panel *panel)
 	}
 
 	panel->dc_enable = false;
+#endif
 
 	rc = dsi_panel_parse_fod_dim_lut(panel, utils);
 	if (rc)
@@ -4681,6 +4703,7 @@ int dsi_panel_enable(struct dsi_panel *panel)
 	if (panel->hbm_mode)
 		dsi_panel_apply_hbm_mode(panel);
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 	if (panel->bl_config.xiaomi_f4_41_flag && panel->dc_enable && panel->dc_demura_threshold) {
 		rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_DISP_DC_ON);
 		if (rc)
@@ -4701,6 +4724,7 @@ int dsi_panel_enable(struct dsi_panel *panel)
 			pr_err("[%s] failed to send DSI_CMD_SET_DISP_DC_ON cmd, rc=%d\n",
 					panel->name, rc);
 	}
+#endif
 
 	return rc;
 }
@@ -4970,6 +4994,7 @@ int dsi_panel_get_lockdowninfo_for_tp(unsigned char *plockdowninfo)
 }
 EXPORT_SYMBOL(dsi_panel_get_lockdowninfo_for_tp);
 
+#if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 int dsi_panel_apply_dc_mode(struct dsi_panel *panel)
 {
 	int rc;
@@ -4992,3 +5017,4 @@ int dsi_panel_apply_dc_mode(struct dsi_panel *panel)
 
 	return rc;
 }
+#endif
