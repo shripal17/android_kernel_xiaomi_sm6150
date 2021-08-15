@@ -263,6 +263,7 @@ struct dsi_panel {
 	u32 doze_backlight_threshold;
 
 	int hbm_mode;
+	int cabc_mode;
 
 	struct brightness_alpha_pair *fod_dim_lut;
 	u32 fod_dim_lut_count;
@@ -406,6 +407,8 @@ int dsi_panel_set_fod_hbm(struct dsi_panel *panel, bool status);
 u32 dsi_panel_get_fod_dim_alpha(struct dsi_panel *panel);
 
 int dsi_panel_apply_hbm_mode(struct dsi_panel *panel);
+
+int dsi_panel_apply_cabc_mode(struct dsi_panel *panel);
 
 #if defined(CONFIG_MACH_XIAOMI_DAVINCI) || defined(CONFIG_MACH_XIAOMI_TOCO) || defined(CONFIG_MACH_XIAOMI_TUCANA)
 int dsi_panel_apply_dc_mode(struct dsi_panel *panel);
