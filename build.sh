@@ -42,7 +42,16 @@ if [ -f $ZIMG ]; then
 	cp -f ./out/arch/arm64/boot/Image.gz $OUTPUT_DIR/Image.gz
 	cp -f ./out/arch/arm64/boot/dts/qcom/sdmmagpie.dtb $OUTPUT_DIR/dtb
 	cp -f ./out/arch/arm64/boot/dtbo.img $OUTPUT_DIR/dtbo.img
-	which avbtool &>/dev/null && python2 `which avbtool` add_hash_footer --partition_name dtbo --partition_size $((32 * 1024 * 1024)) --image $OUTPUT_DIR/dtbo.img
+	which avbtool &>/dev/null && python2 `which avbtool` add_hash_footer \
+		--partition_name dtbo \
+		--partition_size $((32 * 1024 * 1024)) \
+		--image $OUTPUT_DIR/dtbo.img
+	for f in ./out/techpack/data/drivers/rmnet/perf/rmnet_perf.ko ./out/techpack/data/drivers/rmnet/shs/rmnet_shs.ko; do
+		[ -f $f ] && cp -f $f $OUTPUT_DIR
+	done
+	for f in `ls -1 $OUTPUT_DIR | grep '.ko$'`; do
+		${CLANG_PATH}/bin/llvm-strip -S $f
+	done
 	echo -e "$gre << Build completed in $(($Diff / 60)) minutes and $(($Diff % 60)) seconds >> \n $white"
 else
 	echo -e "$red << Failed to compile Image.gz-dtb, fix the errors first >>$white"
