@@ -7,7 +7,7 @@ gre='\e[0;32m'
 ZIMG=./out/arch/arm64/boot/Image.gz-dtb
 OUTPUT_DIR=./../Paradox_release
 
-export LOCALVERSION=-v2.6
+export LOCALVERSION=-v2.7
 
 rm -f $ZIMG
 
@@ -50,7 +50,7 @@ if [ -f $ZIMG ]; then
 		[ -f $f ] && cp -f $f $OUTPUT_DIR
 	done
 	for f in `ls -1 $OUTPUT_DIR | grep '.ko$'`; do
-		${CLANG_PATH}/bin/llvm-strip -S $f
+		${CLANG_PATH}/bin/llvm-strip -S ${OUTPUT_DIR}/$f
 	done
 	echo -e "$gre << Build completed in $(($Diff / 60)) minutes and $(($Diff % 60)) seconds >> \n $white"
 else
