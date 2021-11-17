@@ -14,7 +14,7 @@ rm -f $ZIMG
 export ARCH=arm64
 export SUBARCH=arm64
 export HEADER_ARCH=arm64
-export CLANG_PATH=/home/pzqqt/build_toolchain/clang-r433403b-13.0.3
+export CLANG_PATH=/home/pzqqt/build_toolchain/clang-r437112-14.0.0
 
 export KBUILD_BUILD_HOST="wsl2"
 export KBUILD_BUILD_USER="pzqqt"
