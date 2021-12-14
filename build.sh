@@ -7,7 +7,7 @@ gre='\e[0;32m'
 ZIMG=./out/arch/arm64/boot/Image.gz-dtb
 OUTPUT_DIR=./../Paradox_release
 
-export LOCALVERSION=-v3.2
+export LOCALVERSION=-v3.3
 
 rm -f $ZIMG
 
