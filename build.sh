@@ -19,6 +19,8 @@ export CLANG_PATH=/home/pzqqt/build_toolchain/clang-r437112b-14.0.1
 export KBUILD_BUILD_HOST="wsl2"
 export KBUILD_BUILD_USER="pzqqt"
 
+export PATH=${CLANG_PATH}/bin:${PATH}
+
 ccache_=`which ccache`
 
 make mrproper O=out || exit 1
@@ -28,7 +30,14 @@ Start=$(date +"%s")
 
 make -j$(nproc --all) \
 	O=out \
-	CC="${ccache_} ${CLANG_PATH}/bin/clang" \
+	CC="${ccache_} clang" \
+	AS=llvm-as \
+	LD=ld.lld \
+	AR=llvm-ar \
+	NM=llvm-nm \
+	STRIP=llvm-strip \
+	OBJCOPY=llvm-objcopy \
+	OBJDUMP=llvm-objdump \
 	CLANG_TRIPLE=aarch64-linux-gnu- \
 	CROSS_COMPILE="/home/pzqqt/build_toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-" \
 	CROSS_COMPILE_ARM32="/home/pzqqt/build_toolchain/gcc-arm-10.2-2020.11-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-"
