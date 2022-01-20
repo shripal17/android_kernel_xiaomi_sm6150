@@ -21,7 +21,10 @@ export KBUILD_BUILD_USER="pzqqt"
 
 export PATH=${CLANG_PATH}/bin:${PATH}
 
-ccache_=`which ccache`
+ccache_=`which ccache` || {
+	ccache_=
+	echo -e "$red Warning: ccache is not used! $white"
+}
 
 make mrproper O=out || exit 1
 make phoenix_defconfig O=out || exit 1
