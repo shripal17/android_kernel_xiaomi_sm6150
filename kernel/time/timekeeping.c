@@ -811,6 +811,25 @@ ktime_t ktime_get_with_offset(enum tk_offsets offs)
 }
 EXPORT_SYMBOL_GPL(ktime_get_with_offset);
 
+ktime_t ktime_get_coarse_with_offset(enum tk_offsets offs)
+{
+	struct timekeeper *tk = &tk_core.timekeeper;
+	unsigned int seq;
+	ktime_t base, *offset = offsets[offs];
+
+	WARN_ON(timekeeping_suspended);
+
+	do {
+		seq = read_seqcount_begin(&tk_core.seq);
+		base = ktime_add(tk->tkr_mono.base, *offset);
+
+	} while (read_seqcount_retry(&tk_core.seq, seq));
+
+	return base;
+
+}
+EXPORT_SYMBOL_GPL(ktime_get_coarse_with_offset);
+
 /**
  * ktime_mono_to_any() - convert mononotic time to any other time
  * @tmono:	time to convert.
@@ -2193,6 +2212,24 @@ struct timespec64 get_monotonic_coarse64(void)
 	return now;
 }
 EXPORT_SYMBOL(get_monotonic_coarse64);
+
+void ktime_get_coarse_ts64(struct timespec64 *ts)
+{
+	struct timekeeper *tk = &tk_core.timekeeper;
+	struct timespec64 now, mono;
+	unsigned int seq;
+
+	do {
+		seq = read_seqcount_begin(&tk_core.seq);
+
+		now = tk_xtime(tk);
+		mono = tk->wall_to_monotonic;
+	} while (read_seqcount_retry(&tk_core.seq, seq));
+
+	set_normalized_timespec64(ts, now.tv_sec + mono.tv_sec,
+				now.tv_nsec + mono.tv_nsec);
+}
+EXPORT_SYMBOL(ktime_get_coarse_ts64);
 
 /*
  * Must hold jiffies_lock
