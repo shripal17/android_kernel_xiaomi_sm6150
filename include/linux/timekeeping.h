@@ -39,6 +39,7 @@ static inline struct timespec current_kernel_time(void)
  * timespec based interfaces
  */
 struct timespec64 get_monotonic_coarse64(void);
+extern void ktime_get_coarse_ts64(struct timespec64 *ts);
 extern void getrawmonotonic64(struct timespec64 *ts);
 extern void ktime_get_ts64(struct timespec64 *ts);
 extern time64_t ktime_get_seconds(void);
@@ -173,6 +174,7 @@ enum tk_offsets {
 
 extern ktime_t ktime_get(void);
 extern ktime_t ktime_get_with_offset(enum tk_offsets offs);
+extern ktime_t ktime_get_coarse_with_offset(enum tk_offsets offs);
 extern ktime_t ktime_mono_to_any(ktime_t tmono, enum tk_offsets offs);
 extern ktime_t ktime_get_raw(void);
 extern u32 ktime_get_resolution_ns(void);
@@ -183,6 +185,11 @@ extern u32 ktime_get_resolution_ns(void);
 static inline ktime_t ktime_get_real(void)
 {
 	return ktime_get_with_offset(TK_OFFS_REAL);
+}
+
+static inline ktime_t ktime_get_coarse_real(void)
+{
+	return ktime_get_coarse_with_offset(TK_OFFS_REAL);
 }
 
 /**
@@ -196,12 +203,22 @@ static inline ktime_t ktime_get_boottime(void)
 	return ktime_get_with_offset(TK_OFFS_BOOT);
 }
 
+static inline ktime_t ktime_get_coarse_boottime(void)
+{
+	return ktime_get_coarse_with_offset(TK_OFFS_BOOT);
+}
+
 /**
  * ktime_get_clocktai - Returns the TAI time of day in ktime_t format
  */
 static inline ktime_t ktime_get_clocktai(void)
 {
 	return ktime_get_with_offset(TK_OFFS_TAI);
+}
+
+static inline ktime_t ktime_get_coarse_clocktai(void)
+{
+	return ktime_get_coarse_with_offset(TK_OFFS_TAI);
 }
 
 /**
