@@ -51,6 +51,7 @@
 #include <linux/dax.h>
 #include <linux/psi.h>
 #include <linux/pagevec.h>
+#include <linux/pagewalk.h>
 #include <linux/shmem_fs.h>
 #include <linux/ctype.h>
 #include <linux/debugfs.h>
@@ -3572,9 +3573,7 @@ static void walk_mm(struct lruvec *lruvec, struct mm_struct *mm, struct lru_gen_
 	int err;
 	struct mem_cgroup *memcg = lruvec_memcg(lruvec);
 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
-	struct mm_walk args = {
-		.mm = mm,
-		.private = walk,
+	static const struct mm_walk_ops mm_walk_ops = {
 		.test_walk = should_skip_vma,
 		.p4d_entry = walk_pud_range,
 	};
@@ -3593,7 +3592,7 @@ static void walk_mm(struct lruvec *lruvec, struct mm_struct *mm, struct lru_gen_
 			unsigned long start = walk->next_addr;
 			unsigned long end = mm->highest_vm_end;
 
-			err = walk_page_range(start, end, &args);
+			err = walk_page_range(mm, start, end, &mm_walk_ops, walk);
 
 			up_read(&mm->mmap_sem);
 
