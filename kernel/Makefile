@@ -119,7 +119,17 @@ obj-$(CONFIG_HAS_IOMEM) += memremap.o
 $(obj)/configs.o: $(obj)/config_data.h
 
 targets += config_data.gz
+ifeq ($(CONFIG_MACH_XIAOMI_DAVINCI),y)
+$(obj)/config_data.gz: arch/arm64/configs/vendor/davinci-stock_defconfig FORCE
+else ifeq ($(CONFIG_MACH_XIAOMI_PHOENIX),y)
+$(obj)/config_data.gz: arch/arm64/configs/vendor/phoenix-stock_defconfig FORCE
+else ifeq ($(CONFIG_MACH_XIAOMI_TOCO),y)
+$(obj)/config_data.gz: arch/arm64/configs/vendor/toco-stock_defconfig FORCE
+else ifeq ($(CONFIG_MACH_XIAOMI_TUCANA),y)
+$(obj)/config_data.gz: arch/arm64/configs/vendor/tucana-stock_defconfig FORCE
+else
 $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE
+endif
 	$(call if_changed,gzip)
 
       filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/basic/bin2c; echo "MAGIC_END;")
