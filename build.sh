@@ -7,6 +7,28 @@ gre='\e[0;32m'
 ZIMG=./out/arch/arm64/boot/Image.gz-dtb
 OUTPUT_DIR=./../Paradox_release
 
+no_mkclean=false
+no_ccache=false
+no_thinlto=false
+
+for arg in $@; do
+	case $arg in
+		"--noclean") no_mkclean=true;;
+		"--noccache") no_ccache=true;;
+		"--nolto") no_thinlto=true;;
+		*) {
+			cat <<EOF
+Usage: $0 <operate>
+operate:
+    --noclean  : build without run "make mrproper"
+    --noccache : build without ccache
+    --nolto    : build without LTO
+EOF
+			exit 1
+		};;
+	esac
+done
+
 export LOCALVERSION=-v4.5
 
 rm -f $ZIMG
@@ -21,10 +43,8 @@ export KBUILD_BUILD_USER="pzqqt"
 
 export PATH=${CLANG_PATH}/bin:${PATH}
 
-ccache_=`which ccache` || {
-	ccache_=
-	echo -e "${yellow}Warning: ccache is not used! $white"
-}
+ccache_=
+(! $no_ccache) && ccache_=`which ccache` || echo -e "${yellow}Warning: ccache is not used! $white"
 
 if [ -n "$ccache_" ]; then
 	orig_cache_hit_d=$(	ccache -s | grep 'cache hit (direct)'		| awk '{print $4}')
@@ -34,8 +54,15 @@ if [ -n "$ccache_" ]; then
 	orig_cache_size=$(	ccache -s | grep '^cache size'			| awk '{print $3 " " $4}')
 fi
 
-make mrproper O=out || exit 1
+$no_mkclean || make mrproper O=out || exit 1
 make phoenix_defconfig O=out || exit 1
+
+$no_thinlto && {
+	./scripts/config --file out/.config -d THINLTO
+	./scripts/config --file out/.config -d LTO_CLANG
+	./scripts/config --file out/.config -e LTO_NONE
+	./scripts/config --file out/.config -e RANDOMIZE_MODULE_REGION_FULL
+}
 
 Start=$(date +"%s")
 
