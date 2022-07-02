@@ -89,7 +89,7 @@ if [ -f $ZIMG ]; then
 	cp -f ./out/arch/arm64/boot/dts/qcom/sdmmagpie.dtb $OUTPUT_DIR/dtb
 	cp -f ./out/arch/arm64/boot/dtbo.img $OUTPUT_DIR/dtbo.img
 	which avbtool &>/dev/null && {
-		python2 `which avbtool` add_hash_footer \
+		avbtool add_hash_footer \
 			--partition_name dtbo \
 			--partition_size $((32 * 1024 * 1024)) \
 			--image $OUTPUT_DIR/dtbo.img
