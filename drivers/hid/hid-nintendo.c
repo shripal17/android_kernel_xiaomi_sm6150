@@ -110,6 +110,13 @@
 #define JC_DPAD_FUZZ		0
 #define JC_DPAD_FLAT		0
 
+uint swap_procon_abxy = 0;
+uint swap_joycon_ab = 0;
+uint swap_joycon_xy = 0;
+module_param(swap_procon_abxy, uint, 0644);
+module_param(swap_joycon_ab, uint, 0644);
+module_param(swap_joycon_xy, uint, 0644);
+
 /* frequency/amplitude tables for rumble */
 struct joycon_rumble_freq_data {
 	u16 high;
@@ -811,6 +818,10 @@ static void joycon_parse_report(struct joycon_ctlr *ctlr,
 		u16 raw_y;
 		s32 x;
 		s32 y;
+		u16 _BTN_WEST = BTN_WEST;
+		u16 _BTN_NORTH = BTN_NORTH;
+		u16 _BTN_EAST = BTN_EAST;
+		u16 _BTN_SOUTH = BTN_SOUTH;
 
 		/* get raw stick values */
 		raw_x = hid_field_extract(ctlr->hdev, rep->right_stick, 0, 12);
@@ -834,10 +845,26 @@ static void joycon_parse_report(struct joycon_ctlr *ctlr,
 		input_report_key(dev, BTN_START, btns & JC_BTN_PLUS);
 		input_report_key(dev, BTN_THUMBR, btns & JC_BTN_RSTICK);
 		input_report_key(dev, BTN_MODE, btns & JC_BTN_HOME);
-		input_report_key(dev, BTN_WEST, btns & JC_BTN_Y);
-		input_report_key(dev, BTN_NORTH, btns & JC_BTN_X);
-		input_report_key(dev, BTN_EAST, btns & JC_BTN_A);
-		input_report_key(dev, BTN_SOUTH, btns & JC_BTN_B);
+		if ((jc_type_is_procon(ctlr) || jc_type_is_chrggrip(ctlr)) && 
+		    swap_procon_abxy) {
+			_BTN_WEST = BTN_NORTH;
+			_BTN_NORTH = BTN_WEST;
+			_BTN_EAST = BTN_SOUTH;
+			_BTN_SOUTH = BTN_EAST;
+		} else {
+			if (swap_joycon_xy) {
+				_BTN_WEST = BTN_NORTH;
+				_BTN_NORTH = BTN_WEST;
+			}
+			if (swap_joycon_ab) {
+				_BTN_EAST = BTN_SOUTH;
+				_BTN_SOUTH = BTN_EAST;
+			}
+		}
+		input_report_key(dev, _BTN_WEST, btns & JC_BTN_Y);
+		input_report_key(dev, _BTN_NORTH, btns & JC_BTN_X);
+		input_report_key(dev, _BTN_EAST, btns & JC_BTN_A);
+		input_report_key(dev, _BTN_SOUTH, btns & JC_BTN_B);
 	}
 
 	input_sync(dev);
