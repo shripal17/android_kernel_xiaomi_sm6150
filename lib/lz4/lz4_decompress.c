@@ -580,7 +580,7 @@ safe_match_copy:
 				size_t const copySize = (size_t)(lowPrefix - match);
 				size_t const restSize = length - copySize;
 
-				memcpy(op, dictEnd - copySize, copySize);
+				LZ4_memcpy(op, dictEnd - copySize, copySize);
 				op += copySize;
 				if (restSize > (size_t)(op - lowPrefix)) {
 					/* overlap copy */
@@ -590,7 +590,7 @@ safe_match_copy:
 					while (op < endOfMatch)
 						*op++ = *copyFrom++;
 				} else {
-					memcpy(op, lowPrefix, restSize);
+					LZ4_memcpy(op, lowPrefix, restSize);
 					op += restSize;
 				}
 			}
