@@ -1028,7 +1028,8 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 			sc->nr_scanned++;
 
 		/* in case the page was found accessed by lru_gen_scan_around() */
-		if (lru_gen_enabled() && page_mapped(page) && PageReferenced(page))
+		if (lru_gen_enabled() && !force_reclaim &&
+		    page_mapped(page) && PageReferenced(page))
 			goto keep_locked;
 
 		may_enter_fs = (sc->gfp_mask & __GFP_FS) ||
