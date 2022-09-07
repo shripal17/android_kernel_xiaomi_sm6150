@@ -762,6 +762,8 @@ static const char * const damon_sysfs_damos_action_strs[] = {
 	"pageout",
 	"hugepage",
 	"nohugepage",
+	"lru_prio",
+	"lru_deprio",
 	"stat",
 };
 
