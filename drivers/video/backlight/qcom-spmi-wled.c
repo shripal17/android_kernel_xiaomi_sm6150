@@ -434,7 +434,6 @@ static int wled5_set_brightness(struct wled *wled, u16 brightness)
 
 	if (brightness < WLED_CABC_THR) {
 		wled->cabc_config(wled,false);
-		brightness = brightness*0x0B6C/0xFFF;
 	}
 	else
 		wled->cabc_config(wled,true);
