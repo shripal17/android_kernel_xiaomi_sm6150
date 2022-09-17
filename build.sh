@@ -10,12 +10,21 @@ OUTPUT_DIR=./../Paradox_release
 no_mkclean=false
 no_ccache=false
 no_thinlto=false
+make_flags=
 
-for arg in $@; do
-	case $arg in
+while [ $# != 0 ]; do
+	case $1 in
 		"--noclean") no_mkclean=true;;
 		"--noccache") no_ccache=true;;
 		"--nolto") no_thinlto=true;;
+		"--") {
+			shift
+			while [ -n "$1" ]; do
+				make_flags="${make_flags} $1"
+				shift
+			done
+			break
+		};;
 		*) {
 			cat <<EOF
 Usage: $0 <operate>
@@ -23,10 +32,12 @@ operate:
     --noclean  : build without run "make mrproper"
     --noccache : build without ccache
     --nolto    : build without LTO
+    -- <args>  : parameters passed directly to make
 EOF
 			exit 1
 		};;
 	esac
+	shift
 done
 
 export LOCALVERSION=-v5.2
@@ -66,7 +77,7 @@ $no_thinlto && {
 
 Start=$(date +"%s")
 
-make -j$(nproc --all) \
+make ${make_flags} -j$(nproc --all) \
 	O=out \
 	CC="${ccache_} clang" \
 	AS=llvm-as \
