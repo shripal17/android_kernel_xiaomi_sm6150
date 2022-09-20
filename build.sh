@@ -40,7 +40,7 @@ EOF
 	shift
 done
 
-export LOCALVERSION=-v5.2
+export LOCALVERSION=-v5.3
 
 rm -f $ZIMG
 
