@@ -19,7 +19,7 @@ while [ $# != 0 ]; do
 		"--nolto") no_thinlto=true;;
 		"--") {
 			shift
-			while [ -n "$1" ]; do
+			while [ $# != 0 ]; do
 				make_flags="${make_flags} $1"
 				shift
 			done
@@ -40,19 +40,14 @@ EOF
 	shift
 done
 
-export LOCALVERSION=-v5.3
-
-rm -f $ZIMG
+export CLANG_PATH=/home/pzqqt/build_toolchain/clang-r468909-15.0.2
+export PATH=${CLANG_PATH}/bin:${PATH}
 
 export ARCH=arm64
-export SUBARCH=arm64
-export HEADER_ARCH=arm64
-export CLANG_PATH=/home/pzqqt/build_toolchain/clang-r468909-15.0.2
-
 export KBUILD_BUILD_HOST="wsl2"
 export KBUILD_BUILD_USER="pzqqt"
 
-export PATH=${CLANG_PATH}/bin:${PATH}
+export LOCALVERSION=-v5.3
 
 ccache_=
 (! $no_ccache) && ccache_=`which ccache` || echo -e "${yellow}Warning: ccache is not used! $white"
@@ -64,6 +59,8 @@ if [ -n "$ccache_" ]; then
 	orig_cache_hit_rate=$(	ccache -s | grep 'cache hit rate'		| awk '{print $4 " %"}')
 	orig_cache_size=$(	ccache -s | grep '^cache size'			| awk '{print $3 " " $4}')
 fi
+
+rm -f $ZIMG
 
 $no_mkclean || make mrproper O=out || exit 1
 make phoenix_defconfig O=out || exit 1
