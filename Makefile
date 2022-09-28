@@ -788,6 +788,7 @@ KBUILD_CFLAGS += $(call cc-option, -mllvm -disable-struct-const-merge)
 KBUILD_CFLAGS += $(call cc-option, -Wno-sometimes-uninitialized)
 KBUILD_CFLAGS += $(call cc-option, -Wno-pointer-to-int-cast)
 KBUILD_CFLAGS += $(call cc-option, -Wno-void-pointer-to-int-cast)
+KBUILD_CFLAGS += $(call cc-disable-warning, void-ptr-dereference) 
 
 # Quiet clang warning: comparison of unsigned expression < 0 is always false
 
