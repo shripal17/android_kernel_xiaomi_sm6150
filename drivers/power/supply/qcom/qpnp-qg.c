@@ -1537,7 +1537,14 @@ static int qg_get_learned_capacity(void *data, int64_t *learned_cap_uah)
 		pr_err("Error in reading learned_capacity, rc=%d\n", rc);
 		return rc;
 	}
+#ifdef CONFIG_MACH_XIAOMI_PHOENIX
+	if (cc_mah >= chip->bp.nom_cap_uah)
+		*learned_cap_uah = cc_mah * 1000;
+	else
+		*learned_cap_uah = chip->bp.nom_cap_uah * 1000;
+#else
 	*learned_cap_uah = cc_mah * 1000;
+#endif
 
 	return 0;
 }
