@@ -3788,8 +3788,6 @@ done:
 	if (wq_has_sleeper(&lruvec->mm_state.wait))
 		wake_up_all(&lruvec->mm_state.wait);
 
-	wakeup_flusher_threads(0, WB_REASON_VMSCAN);
-
 	return true;
 }
 
@@ -3884,7 +3882,7 @@ static bool age_lruvec(struct lruvec *lruvec, struct scan_control *sc,
 }
 
 /* to protect the working set of the last N jiffies */
-static unsigned long lru_gen_min_ttl __read_mostly;
+static unsigned long lru_gen_min_ttl __read_mostly = 5 * HZ; // 5000ms
 
 static void lru_gen_age_node(struct pglist_data *pgdat, struct scan_control *sc)
 {
