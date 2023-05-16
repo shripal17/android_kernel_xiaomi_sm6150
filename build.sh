@@ -40,7 +40,7 @@ EOF
 	shift
 done
 
-export CLANG_PATH=/home/pzqqt/build_toolchain/clang-r487747b-17.0.1
+export CLANG_PATH=/home/pzqqt/build_toolchain/clang-r487747c-17.0.2
 export PATH=${CLANG_PATH}/bin:${PATH}
 
 export ARCH=arm64
