@@ -47,7 +47,7 @@ export ARCH=arm64
 export KBUILD_BUILD_HOST="wsl2"
 export KBUILD_BUILD_USER="pzqqt"
 
-export LOCALVERSION=-v6.2
+export LOCALVERSION=-v6.3
 
 ccache_=
 (! $no_ccache) && ccache_=`which ccache` || echo -e "${yellow}Warning: ccache is not used! $white"
