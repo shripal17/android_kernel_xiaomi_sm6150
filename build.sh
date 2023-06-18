@@ -10,6 +10,7 @@ OUTPUT_DIR=./../Paradox_release
 no_mkclean=false
 no_ccache=false
 no_thinlto=false
+with_ksu=false
 make_flags=
 
 while [ $# != 0 ]; do
@@ -17,6 +18,7 @@ while [ $# != 0 ]; do
 		"--noclean") no_mkclean=true;;
 		"--noccache") no_ccache=true;;
 		"--nolto") no_thinlto=true;;
+		"--ksu") with_ksu=true;;
 		"--") {
 			shift
 			while [ $# != 0 ]; do
@@ -32,6 +34,7 @@ operate:
     --noclean  : build without run "make mrproper"
     --noccache : build without ccache
     --nolto    : build without LTO
+    --ksu      : build with KernelSU support
     -- <args>  : parameters passed directly to make
 EOF
 			exit 1
@@ -48,6 +51,7 @@ export KBUILD_BUILD_HOST="wsl2"
 export KBUILD_BUILD_USER="pzqqt"
 
 export LOCALVERSION=-v6.5
+$with_ksu && export LOCALVERSION="${LOCALVERSION}-ksu"
 
 ccache_=
 (! $no_ccache) && ccache_=`which ccache` || echo -e "${yellow}Warning: ccache is not used! $white"
@@ -72,9 +76,14 @@ $no_thinlto && {
 	./scripts/config --file out/.config -e RANDOMIZE_MODULE_REGION_FULL
 }
 
+$with_ksu && {
+	./scripts/config --file out/.config -e KSU
+	./scripts/config --file out/.config -d KSU_DEBUG
+}
+
 Start=$(date +"%s")
 
-make ${make_flags} -j$(nproc --all) \
+make -j$(nproc --all) \
 	O=out \
 	CC="${ccache_} clang" \
 	AS=llvm-as \
@@ -85,7 +94,8 @@ make ${make_flags} -j$(nproc --all) \
 	OBJCOPY=llvm-objcopy \
 	OBJDUMP=llvm-objdump \
 	CROSS_COMPILE="/home/pzqqt/build_toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-" \
-	CROSS_COMPILE_ARM32="/home/pzqqt/build_toolchain/gcc-arm-11.2-2022.02-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-"
+	CROSS_COMPILE_ARM32="/home/pzqqt/build_toolchain/gcc-arm-11.2-2022.02-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-" \
+	${make_flags}
 
 exit_code=$?
 End=$(date +"%s")
