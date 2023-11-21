@@ -93,8 +93,8 @@ make -j$(nproc --all) \
 	STRIP=llvm-strip \
 	OBJCOPY=llvm-objcopy \
 	OBJDUMP=llvm-objdump \
-	CROSS_COMPILE="/home/pzqqt/build_toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-" \
-	CROSS_COMPILE_ARM32="/home/pzqqt/build_toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-" \
+	CROSS_COMPILE="/home/pzqqt/build_toolchain/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-" \
+	CROSS_COMPILE_ARM32="/home/pzqqt/build_toolchain/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-" \
 	${make_flags}
 
 exit_code=$?
