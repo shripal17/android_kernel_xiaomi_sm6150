@@ -50,7 +50,7 @@ export ARCH=arm64
 export KBUILD_BUILD_HOST="wsl2"
 export KBUILD_BUILD_USER="pzqqt"
 
-export LOCALVERSION=-v6.9
+export LOCALVERSION=-v7.0-EOL
 $with_ksu && export LOCALVERSION="${LOCALVERSION}-ksu"
 
 ccache_=
