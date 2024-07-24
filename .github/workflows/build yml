@@ -3,10 +3,10 @@ name: Kernel Build
 on:
   push:
     branches:
-      - pure-phoenix-new-ksu  # Adjust if your default branch is not 'main'
+      - sajadasadollahi83-patch-10  # Adjust if your default branch is not 'main'
   pull_request:
     branches:
-      - pure-phoenix-new-ksu  # Adjust if your default branch is not 'main'
+      - sajadasadollahi83-patch-10 # Adjust if your default branch is not 'main'
 
 jobs:
   build:
