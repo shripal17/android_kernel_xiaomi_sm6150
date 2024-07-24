@@ -1,0 +1,74 @@
+name: Kernel Build
+
+on:
+  push:
+    branches:
+      - sajadasadollahi83-patch-10
+  pull_request:
+    branches:
+      - sajadasadollahi83-patch-10
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v2
+
+    - name: Set up ccache
+      uses: actions/cache@v2
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os }}-ccache-${{ hashFiles('**/Makefile') }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget ccache bc
+
+    - name: Set up toolchains
+      run: |
+        mkdir -p toolchains
+        cd toolchains
+
+        # Clone AOSP Clang
+        git clone https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 clang-r450784d
+        cd clang-r450784d
+        git checkout r450784d
+        cd ..
+
+        # Clone GCC toolchains
+        git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
+        git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9
+
+    - name: Build the kernel
+      run: |
+        export USE_CCACHE=1
+        export CCACHE_DIR=$HOME/.ccache
+        ccache -M 50G
+
+        export PATH=$(pwd)/toolchains/clang-r450784d/bin:$PATH
+        export ARCH=arm64
+        export SUBARCH=arm64
+        export CROSS_COMPILE=$(pwd)/toolchains/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+        export CROSS_COMPILE_COMPAT=$(pwd)/toolchains/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
+        export CC=clang
+        export CLANG_TRIPLE=aarch64-linux-gnu-
+
+        mkdir -p out
+        make O=out clean
+        make O=out mrproper
+        make O=out phoenix_defconfig
+
+        if [ "$KERNELSU_ENABLED" = "true" ]; then
+          echo "Enabling KernelSU..."
+          sed -i 's/# CONFIG_KERNELSU is not set/CONFIG_KERNELSU=y/' out/.config
+        fi
+
+        make -j$(nproc) O=out
+
+    env:
+      KERNELSU_ENABLED: false  # Set this to true if you want KernelSU enabled by default
