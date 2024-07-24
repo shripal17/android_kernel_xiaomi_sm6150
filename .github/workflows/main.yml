@@ -1,12 +1,7 @@
 name: Kernel Build
 
 on:
-  push:
-    branches:
-      - sajadasadollahi83-patch-10
-  pull_request:
-    branches:
-      - sajadasadollahi83-patch-10
+  workflow_dispatch:
 
 jobs:
   build:
