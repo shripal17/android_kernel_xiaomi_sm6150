@@ -1,12 +1,7 @@
 name: Kernel Build
 
 on:
-  push:
-    branches:
-      - sajadasadollahi83-patch-10  # Adjust if your default branch is not 'main'
-  pull_request:
-    branches:
-      - sajadasadollahi83-patch-10 # Adjust if your default branch is not 'main'
+  workflow_dispatch:
 
 jobs:
   build:
