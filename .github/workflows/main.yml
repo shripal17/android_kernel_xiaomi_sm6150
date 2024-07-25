@@ -30,9 +30,9 @@ jobs:
         cd toolchains
 
         # Clone AOSP Clang
-        git clone https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 clang-r450784d
-        cd clang-r450784d
-        git checkout r450784d
+        git clone https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/master/clang-r530567 clang
+        cd clang
+        git checkout r530567
         cd ..
 
         # Clone GCC toolchains
@@ -45,7 +45,7 @@ jobs:
         export CCACHE_DIR=$HOME/.ccache
         ccache -M 50G
 
-        export PATH=$(pwd)/toolchains/clang-r450784d/bin:$PATH
+        export PATH=$(pwd)/toolchains/clang/bin:$PATH
         export ARCH=arm64
         export SUBARCH=arm64
         export CROSS_COMPILE=$(pwd)/toolchains/aarch64-linux-android-4.9/bin/aarch64-linux-android-
