@@ -23,7 +23,6 @@
 
 /* HTC Control message receive timeout msec */
 #define HTC_CONTROL_RX_TIMEOUT     6000
-
 #if defined(WLAN_DEBUG) || defined(DEBUG)
 
 char byteOffsetStr[5]; // New line: Declare a buffer with enough space for the string
